@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install (with MCP extra)
+        run: pip install -e ".[dev,mcp]"
+      - name: Test
+        run: pytest -q
+      - name: MCP server smoke test
+        run: python -c "import asyncio; from emublog2mlv import mcp_server as m; print(len(asyncio.run(m.mcp.list_tools())), 'MCP tools')"

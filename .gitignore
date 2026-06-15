@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# Build artifacts
+build/
+dist/
+*.spec
+*.exe
+
+# Converter output (don't commit generated logs; samples are committed explicitly)
+*.msl
+*.csv
+!examples/*.msl
+!examples/*.csv
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

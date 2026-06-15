@@ -1,0 +1,13 @@
+# Normalize text to LF in the repo; check out native on Windows.
+* text=auto eol=lf
+
+# Binary log formats — never apply line-ending or encoding conversion.
+*.emublog binary
+*.emublog3 binary
+*.emub binary
+*.emubt binary
+*.exe binary
+
+# Generated MegaLogViewer logs are plain text.
+*.msl text eol=lf
+*.csv text eol=lf

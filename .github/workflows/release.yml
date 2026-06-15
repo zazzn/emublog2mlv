@@ -1,0 +1,29 @@
+name: Release
+
+# Tag a release to trigger this, e.g.:  git tag v1.0.0 && git push origin v1.0.0
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  windows-exe:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install build deps
+        run: pip install pyinstaller .
+      - name: Build exe
+        run: python scripts/build_exe.py
+      - name: Smoke test exe
+        run: ./dist/emublog2mlv.exe examples/sample_cruise.emublog -o sample_ci.msl
+      - name: Attach exe to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/emublog2mlv.exe
+          generate_release_notes: true
