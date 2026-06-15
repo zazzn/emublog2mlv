@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "emublog2mlv"
-version = "1.0.0"
+version = "1.2.0"
 description = "Convert ECU Master EMU Black .emublog binary logs to MegaLogViewer HD (.msl / .csv)"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -38,6 +38,9 @@ Issues = "https://github.com/zazzn/emublog2mlv/issues"
 [project.scripts]
 emublog2mlv = "emublog2mlv.cli:main"
 emublog2mlv-mcp = "emublog2mlv.mcp_server:main"
+
+[project.gui-scripts]
+emublog2mlv-gui = "emublog2mlv.gui:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

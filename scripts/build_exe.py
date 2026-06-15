@@ -1,34 +1,47 @@
-"""Build a standalone ``emublog2mlv`` executable with PyInstaller.
+"""Build standalone ``emublog2mlv`` executables with PyInstaller.
 
     pip install pyinstaller
     python scripts/build_exe.py
 
-Produces ``dist/emublog2mlv.exe`` (Windows) or ``dist/emublog2mlv`` (Linux/macOS):
-a single self-contained binary that needs no Python install.
+Produces (in ``dist/``):
+  emublog2mlv.exe      — command-line converter (console)
+  emublog2mlv-gui.exe  — double-click GUI (windowed, no console)
 """
 import os
 import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ENTRY = os.path.join(ROOT, "scripts", "_entry.py")
 SRC = os.path.join(ROOT, "src")
+DIST = os.path.join(ROOT, "dist")
+WORK = os.path.join(ROOT, "build")
 
 
-def main():
+def build_one(name, entry, windowed):
     args = [
         sys.executable, "-m", "PyInstaller",
         "--onefile",
-        "--name", "emublog2mlv",
+        "--name", name,
         "--paths", SRC,
-        "--distpath", os.path.join(ROOT, "dist"),
-        "--workpath", os.path.join(ROOT, "build"),
-        "--specpath", os.path.join(ROOT, "build"),
+        "--distpath", DIST,
+        "--workpath", WORK,
+        "--specpath", WORK,
         "--noconfirm",
-        ENTRY,
     ]
-    print("running:", " ".join(args))
-    raise SystemExit(subprocess.call(args))
+    if windowed:
+        args.append("--windowed")
+    args.append(entry)
+    print("building", name)
+    return subprocess.call(args)
+
+
+def main():
+    rc = build_one("emublog2mlv",
+                   os.path.join(ROOT, "scripts", "_entry.py"), windowed=False)
+    if rc == 0:
+        rc = build_one("emublog2mlv-gui",
+                       os.path.join(ROOT, "scripts", "_entry_gui.py"), windowed=True)
+    raise SystemExit(rc)
 
 
 if __name__ == "__main__":

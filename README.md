@@ -17,17 +17,21 @@ analysis) instead of being locked into the EMU Client viewer.
 
 ## Three ways to use it
 
-### 1. Standalone `.exe` (no Python needed) — easiest
+### 1. Standalone apps (no Python needed) — easiest
 
-Download `emublog2mlv.exe` from the
-[**Releases**](https://github.com/zazzn/emublog2mlv/releases) page, then drag a
-log onto it, or from a terminal:
+Download from the [**Releases**](https://github.com/zazzn/emublog2mlv/releases) page:
 
-```bat
-emublog2mlv.exe yourlog.emublog
-```
+- **`emublog2mlv-gui.exe`** — double-click for a simple window: add one or many
+  logs (or a whole folder), choose `.msl`/`.csv`, set the output folder or a
+  custom name for a single file, then **Convert**. Best for batch/mass conversion.
+- **`emublog2mlv.exe`** — command-line version. Drag a log onto it, or:
 
-This writes `yourlog.msl` next to it. Open that in MegaLogViewer HD.
+  ```bat
+  emublog2mlv.exe yourlog.emublog       REM -> yourlog.msl
+  emublog2mlv.exe *.emublog              REM batch convert
+  ```
+
+Open the resulting `.msl` in MegaLogViewer HD.
 
 ### 2. Python package (CLI + library)
 
@@ -82,17 +86,21 @@ naïve `index / 25` drifts ~0.7% over a few minutes.
 
 ### Decoded channels
 
-24 measured channels plus 2 derived (`AFR`, `AFRTarget` = λ × 14.7):
+31 measured channels plus 2 derived (`AFR`, `AFRTarget` = λ × 14.7):
 
 `RPM`, `MAP`, `TPS`, `VE`, `IgnitionAngle`, `IgnFromTable`, `InjectorsPW`,
 `InjectorsDC`, `InjCalTime`, `ShortTermTrim`, `Lambda`, `LambdaTarget`, `IAT`,
 `ChargeTemp`, `CLT`, `OilTemp`, `OilPressure`, `FuelPressure`, `IATCorrection`,
-`Ethanol`, `AirFlow`, `CAM1valveDC`, `IdleTarget`, `FCustomCorrActive`.
+`Ethanol`, `AirFlow`, `CAM1valveDC`, `AccelEnrichment`, `AccelEnrichmentPW`,
+`KnockSensor`, `BatteryVoltage`, `BoostTarget`, `BoostDC`, `BoostDCFromTable`,
+`IdleTarget`, `FCustomCorrActive`.
 
-Channels that stay flat in a gentle cruise log (knock level, boost
-duty/target/correction, EGT, gear, vehicle speed, AFR2, BARO, engine
-power/torque, dwell, warmup) are **not mapped yet** — they need a dynamic drive
-to correlate. See [Contributing](#contributing-add-a-channel).
+Still unmapped — each needs a drive that *exercises* it: knock level / ignition
+retard (a knock event), decel enrichment (overrun), warmup/afterstart (a cold
+start), boost PID correction (closed-loop boost), plus dwell, BARO, gear, vehicle
+speed, AFR2/Lambda2, and engine power/torque — they read flat in a gentle cruise.
+EGT is omitted (this car has no EGT sensor). See
+[Contributing](#contributing-add-a-channel).
 
 ---
 

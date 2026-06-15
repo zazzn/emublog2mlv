@@ -61,6 +61,15 @@ CHANNELS = [
     ("Ethanol",           "%",      125, "u16",  1.0 / 512, None),
     ("AirFlow",           "",       256, "u16",  1.0 / 256, None),
     ("CAM1valveDC",       "%",      104, "u16",  1.0 / 256, None),  # ~0 in cruise (tentative)
+    # added 2026-06-15: event-correlated vs the 0614 CSVs (r=1.0, decode-verified to CSV)
+    ("AccelEnrichment",   "%",       37, "u8",   1.0,       None),  # tip-in enrichment, raw = %
+    ("AccelEnrichmentPW", "ms",      38, "u16",  1.0 / 62,  None),  # ~0.01613; byte 39 shared w/ STT structural-zero low byte
+    ("KnockSensor",       "V",       19, "u16",  7.66354e-5, None), # knock sensor signal (scale/unit tentative)
+    ("BatteryVoltage",    "V",        8, "u16",  1.0 / 37,  None),  # ~0.027/count (small intercept dropped)
+    # added 2026-06-15 from the 0128 boost drive (r=1.0, decode-verified to CSV)
+    ("BoostTarget",       "kPa",     84, "u16",  1.0,       None),  # MAP-target (kPa abs)
+    ("BoostDC",           "%",       81, "u16",  1.0 / 256, None),  # wastegate solenoid duty
+    ("BoostDCFromTable",  "%",       83, "u8",   1.0,       None),  # open-loop base duty from table
     ("IdleTarget",        "rpm",     23, "u16",  1.0,       None),  # phantom: stock ECU runs idle on this car
     ("FCustomCorrActive", "bool",   214, "flag", None,      11),    # bit 11 (0x800)
 ]
@@ -175,6 +184,19 @@ def _fmt(v):
 
 def default_output(in_path, fmt):
     return os.path.splitext(in_path)[0] + ("." + fmt)
+
+
+def planned_output(in_path, fmt, out_dir=None, out_name=None):
+    """Resolve the output path for a GUI / batch conversion.
+
+    ``out_dir``: target directory (default: the source file's directory).
+    ``out_name``: custom file name for single-file export (default: source stem).
+    The extension is always forced to match ``fmt`` so name and content agree.
+    """
+    base = (out_name or "").strip() or os.path.basename(in_path)
+    stem = os.path.splitext(base)[0]
+    directory = (out_dir or "").strip() or os.path.dirname(os.path.abspath(in_path))
+    return os.path.join(directory, stem + "." + fmt)
 
 
 def convert(in_path, out_path=None, fmt="msl"):

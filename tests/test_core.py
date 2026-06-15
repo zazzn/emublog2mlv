@@ -88,6 +88,20 @@ def test_default_output_extension():
     assert core.default_output("log.emublog", "csv").endswith("log.csv")
 
 
+def test_planned_output():
+    # default: source stem + fmt ext, beside the source
+    assert core.planned_output("log.emublog", "msl").endswith("log.msl")
+    # custom output folder
+    out = core.planned_output("log.emublog", "csv", out_dir=os.path.join("X", "Y"))
+    assert out == os.path.join("X", "Y", "log.csv")
+    # custom name for a single file
+    assert core.planned_output("log.emublog", "msl", out_name="myname").endswith("myname.msl")
+    # extension is forced to match fmt even if the custom name carries another one
+    assert core.planned_output("log.emublog", "msl", out_name="myname.csv").endswith("myname.msl")
+    # blank/whitespace name falls back to the source stem
+    assert core.planned_output("log.emublog", "msl", out_name="  ").endswith("log.msl")
+
+
 def test_bad_format_rejected(tmp_path):
     with pytest.raises(ValueError):
         core.convert(SAMPLE, str(tmp_path / "x"), "xml")
