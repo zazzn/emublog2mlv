@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.1 — 2026-11-27
+
+- Fix `Lambda` (and the derived `AFR`) on EMU Black firmware **2.176**: lambda is
+  a single byte (`u8` @ 43, /128), not a `u16`. Byte 44 belongs to another
+  channel; it is always 0 on 2.169 but non-zero on 2.176, which turned e.g.
+  1.008 into 21.008. Verified against a 34 554-row EMU Client CSV export from
+  2.176 (max error 0.0005, i.e. rounding). 2.169 output is unchanged.
+
 ## 1.2.0 — 2026-06-15
 
 - Expand the decoded channel map to **31 measured + 2 derived** (was 24 + 2). New

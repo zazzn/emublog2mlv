@@ -1,7 +1,8 @@
 """
 Decode ECU Master EMU Black ``.emublog`` binary logs.
 
-Format (reverse-engineered for EMU Black **V2**, firmware 2.169):
+Format (reverse-engineered for EMU Black **V2**, firmware 2.169; also verified
+on firmware 2.176):
 
 * gzip-compressed; decompress -> 12-byte header, then fixed 308-byte records,
   one record per sample.  ``records = (size - 12) / 308``.
@@ -49,7 +50,10 @@ CHANNELS = [
     ("InjectorsDC",       "%",       97, "u16",  1.0 / 512, None),
     ("InjCalTime",        "ms",      15, "u8",   1.0 / 32,  None),
     ("ShortTermTrim",     "%",       39, "u16",  1.0 / 512, None),
-    ("Lambda",            "lambda",  43, "u16",  1.0 / 128, None),
+    # u8, not u16: byte 44 is a different channel. It is always 0 on fw 2.169
+    # (so the old u16 read happened to work) but non-zero on fw 2.176, which
+    # added +2/+4/.../+510 garbage to lambda. Verified vs a 2.176 EMU CSV export.
+    ("Lambda",            "lambda",  43, "u8",   1.0 / 128, None),
     ("LambdaTarget",      "lambda", 189, "u16",  1.0 / 100, None),
     ("IAT",               "C",      187, "u16",  1.0 / 256, None),
     ("ChargeTemp",        "C",      187, "u16",  1.0 / 256, None),  # ==IAT off-boost; needs boost log to separate
