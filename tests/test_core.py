@@ -114,3 +114,13 @@ def test_summarize_ranges_sane():
     assert 0 < by["RPM"]["min"] <= by["RPM"]["max"] < 8000
     assert 0.6 < by["Lambda"]["min"] <= by["Lambda"]["max"] < 1.4
     assert by["Ethanol"]["min"] == pytest.approx(79.5, abs=1.0)
+
+
+def test_lambda_is_single_byte():
+    """fw 2.176 puts a non-zero value in byte 44; lambda must ignore it."""
+    body, _n, _ = core.read_records(SAMPLE)
+    rec = bytearray(body[:core.RECORD_LEN])
+    rec[43], rec[44] = 129, 10          # 129/128 = 1.0078; old u16 read gave 21.0078
+    r = core.decode_record(bytes(rec), 0)
+    assert r["Lambda"] == pytest.approx(129 / 128)
+    assert r["AFR"] == pytest.approx(129 / 128 * 14.7)

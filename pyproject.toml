@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "emublog2mlv"
-version = "1.2.0"
+version = "1.2.1"
 description = "Convert ECU Master EMU Black .emublog binary logs to MegaLogViewer HD (.msl / .csv)"
 readme = "README.md"
 requires-python = ">=3.10"
